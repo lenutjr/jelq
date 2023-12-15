@@ -23,6 +23,10 @@ section1:addTextbox("Reel Delay", "Input Number", function(reel)
     pullOut = tonumber(reel)
 end)
 
+section1:addTextbox("Catch Delay", "Input Number", function(catch)
+    catchDelay = tonumber(catch)
+end)
+
 section1:addToggle("Auto Fish", nil, function(v)
    Config.autoFish = v
    spawn(autoFish)
@@ -155,7 +159,7 @@ function autoFish()
             [2] = "RequestReel"
         }
         game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(reelArgs))
-
+        task.wait(0.2)
         local hasFishingLine = false
         for _, descendant in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
             if descendant.Name == "FishingLine" then
@@ -168,7 +172,7 @@ function autoFish()
             continue
         end
 
-        task.wait(4)
+        task.wait(catchDelay)
         local resultArgs = {
             [1] = "Fishing",
             [2] = "FishingResult",
@@ -181,33 +185,47 @@ function autoFish()
 end
 
 function autoFishRand()
-    while task.wait() and Config.autoFishRand do
-        local x = math.random(5, 20)
-        local z = math.random(5, 20)
+    while true do
+        if not Config.autoFishRand then break end
 
-        local args = {
+        local x = math.random(10, 20)
+        local z = math.random(10, 20)
+
+        local castArgs = {
             [1] = "Fishing",
             [2] = "RequestCast",
             [3] = Vector3.new(1127.7171630859375, 75.91412353515625, -3445.412353515625) + Vector3.new(x, 0, z)
         }
-        
-        game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(args))
+        game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(castArgs))
         wait(pullOut)
-        
+
         local reelArgs = {
             [1] = "Fishing",
             [2] = "RequestReel"
         }
-        
         game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(reelArgs))
-        wait(4)
-        
+        task.wait(0.2)
+        local hasFishingLine = false
+        for _, descendant in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+            if descendant.Name == "FishingLine" then
+                hasFishingLine = true
+                break
+            end
+        end
+
+        if not hasFishingLine then
+            continue
+        end
+
+        task.wait(catchDelay)
         local resultArgs = {
             [1] = "Fishing",
             [2] = "FishingResult",
             [3] = true
         }
         game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(resultArgs))
+
+        task.wait()
     end
 end
 
