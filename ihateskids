@@ -142,32 +142,29 @@ function autoFish()
     while true do
         if not Config.autoFish then break end
 
-        local hasFishingLine = false
+        local castArgs = {
+            [1] = "Fishing",
+            [2] = "RequestCast",
+            [3] = Vector3.new(1127.7171630859375, 75.91412353515625, -3445.412353515625)
+        }
+        game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(castArgs))
+        wait(pullOut)
+
+            local reelArgs = {
+                [1] = "Fishing",
+                [2] = "RequestReel"
+            }
+            game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(reelArgs))
+
+            local hasFishingLine = false
         for _, descendant in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
             if descendant.Name == "FishingLine" then
                 hasFishingLine = true
                 break
             end
         end
-
-        if hasFishingLine then
-            local args = {
-                [1] = "Fishing",
-                [2] = "RequestCast",
-                [3] = Vector3.new(1127.7171630859375, 75.91412353515625, -3445.412353515625)
-            }
-            
-            game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(args))
-            wait(pullOut)
-            
-            local reelArgs = {
-                [1] = "Fishing",
-                [2] = "RequestReel"
-            }
-            
-            game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(reelArgs))
-            wait(4)
-            
+            if hasFishingLine then
+            task.wait(4)
             local resultArgs = {
                 [1] = "Fishing",
                 [2] = "FishingResult",
@@ -175,11 +172,9 @@ function autoFish()
             }
             game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(resultArgs))
         end
-
         task.wait()
     end
 end
-
 
 function autoFishRand()
     while task.wait() and Config.autoFishRand do
