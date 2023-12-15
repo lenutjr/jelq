@@ -37,6 +37,10 @@ section1:addToggle("Auto Fish (Cast Random Location)", nil, function(v)
     spawn(autoFishRand)
  end)
 
+section1:addButton("TP to Fishing Area", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(794, 19, 1140)
+end)
+
 section2:addTextbox("Farming Range", "Input Number", function(r)
     range = tonumber(r)
 end)
