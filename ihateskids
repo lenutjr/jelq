@@ -168,8 +168,8 @@ end
 
 function autoFishRand()
     while task.wait() and Config.autoFishRand do
-        local x = math.random(-10, 10)
-        local z = math.random(-10, 10)
+        local x = math.random(-5, 20)
+        local z = math.random(-5, 20)
 
         local args = {
             [1] = "Fishing",
