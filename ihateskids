@@ -28,6 +28,11 @@ section1:addToggle("Auto Fish", nil, function(v)
    spawn(autoFish)
 end)
 
+section1:addToggle("Auto Fish (Cast Random Location)", nil, function(v)
+    Config.autoFishRand = v
+    spawn(autoFishRand)
+ end)
+
 section2:addTextbox("Farming Range", "Input Number", function(r)
     range = tonumber(r)
 end)
@@ -139,6 +144,37 @@ function autoFish()
             [1] = "Fishing",
             [2] = "RequestCast",
             [3] = Vector3.new(1127.7171630859375, 75.91412353515625, -3445.412353515625)
+        }
+        
+        game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(args))
+        wait(pullOut)
+        
+        local reelArgs = {
+            [1] = "Fishing",
+            [2] = "RequestReel"
+        }
+        
+        game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(reelArgs))
+        wait(4)
+        
+        local resultArgs = {
+            [1] = "Fishing",
+            [2] = "FishingResult",
+            [3] = true
+        }
+        game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(resultArgs))
+    end
+end
+
+function autoFishRand()
+    while task.wait() and Config.autoFishRand do
+        local x = math.random(-50, 50)
+        local z = math.random(-50, 50)
+
+        local args = {
+            [1] = "Fishing",
+            [2] = "RequestCast",
+            [3] = Vector3.new(1127.7171630859375, 75.91412353515625, -3445.412353515625) + Vector3.new(x, 0, z)
         }
         
         game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(args))
