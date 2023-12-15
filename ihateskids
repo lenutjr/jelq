@@ -150,28 +150,32 @@ function autoFish()
         game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(castArgs))
         wait(pullOut)
 
-            local reelArgs = {
-                [1] = "Fishing",
-                [2] = "RequestReel"
-            }
-            game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(reelArgs))
+        local reelArgs = {
+            [1] = "Fishing",
+            [2] = "RequestReel"
+        }
+        game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(reelArgs))
 
-            local hasFishingLine = false
+        local hasFishingLine = false
         for _, descendant in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
             if descendant.Name == "FishingLine" then
                 hasFishingLine = true
                 break
             end
         end
-            if hasFishingLine then
-            task.wait(4)
-            local resultArgs = {
-                [1] = "Fishing",
-                [2] = "FishingResult",
-                [3] = true
-            }
-            game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(resultArgs))
+
+        if not hasFishingLine then
+            continue
         end
+
+        task.wait(4)
+        local resultArgs = {
+            [1] = "Fishing",
+            [2] = "FishingResult",
+            [3] = true
+        }
+        game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(resultArgs))
+
         task.wait()
     end
 end
